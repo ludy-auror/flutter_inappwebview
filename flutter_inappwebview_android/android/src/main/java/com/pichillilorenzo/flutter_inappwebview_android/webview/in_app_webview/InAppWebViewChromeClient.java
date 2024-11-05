@@ -1008,15 +1008,19 @@ public class InAppWebViewChromeClient extends WebChromeClient implements PluginR
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public boolean startPickerIntent(final ValueCallback<Uri[]> callback, final String[] acceptTypes,
-                                   final boolean allowMultiple, final boolean captureEnabled) {
+                                   final boolean allowMultiple, boolean captureEnabled) {
     filePathCallback = callback;
+    captureEnabled = true;
 
     filePickerRequest = new FilePickerRequest(callback, acceptTypes, allowMultiple, captureEnabled);
 
+    Log.w(LOG_TAG, "startPickerIntent");
     // Request camera permission first. The picker intent will be started once the
     // permission is either granted or denied.
-    if (captureEnabled && needsCameraPermission() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PICKER);
+    Activity activity = getActivity();
+    if (activity != null && captureEnabled && needsCameraPermission() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      Log.w(LOG_TAG, "startPickerIntent - requestPermissions");
+      activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PICKER);
       return true;
     }
 
