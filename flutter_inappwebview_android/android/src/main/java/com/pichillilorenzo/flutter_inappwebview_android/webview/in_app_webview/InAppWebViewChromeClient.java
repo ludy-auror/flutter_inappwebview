@@ -1054,7 +1054,11 @@ public class InAppWebViewChromeClient extends WebChromeClient implements PluginR
     pickerIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toArray(new Parcelable[]{}));
 
     Activity activity = getActivity();
-    activity.startActivityForResult(pickerIntent, PICKER);
+    if (activity != null && pickerIntent.resolveActivity(activity.getPackageManager()) != null) {
+      activity.startActivityForResult(pickerIntent, PICKER);
+    } else {
+      Log.d(LOG_TAG, "there is no Activity to handle this Intent");
+    }
 
     return true;
   }
